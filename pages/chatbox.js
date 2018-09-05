@@ -1,11 +1,19 @@
 import React from 'react';
+import fetch from 'isomorphic-unfetch';
+import getConfig from 'next/config';
+
+// Only holds serverRuntimeConfig and publicRuntimeConfig from next.config.js nothing else.
+const {
+  publicRuntimeConfig: {domain},
+} = getConfig();
 
 export default class IndexPage extends React.Component {
   state = {messages: [], text: ''};
 
   static async getInitialProps({query}) {
     const {username} = query;
-    return {username};
+    const id = await fetch(`${domain}/id`).then(r => r.text());
+    return {username, id};
   }
 
   constructor(props) {
@@ -44,6 +52,7 @@ export default class IndexPage extends React.Component {
     return (
       <div>
         <h1>Hi {this.props.username}!</h1>
+        <h3>Your server ID is: {this.props.id}</h3>
 
         <div>
           {this.state.messages.map(message => (

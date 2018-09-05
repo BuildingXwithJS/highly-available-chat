@@ -14,10 +14,12 @@ services:
     ports:
       - '6379:6379'
 
-  service:
-    build: .
+  chat:
+    # build: .
+    image: ha-chat
     environment:
-      - MY_MESSAGE=load1
+      - REDIS_HOST=redis
+      - DOMAIN=http://chat.test
     labels:
       - 'traefik.frontend.rule=Host:chat.test'
       - 'traefik.backend=chat'

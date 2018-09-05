@@ -3,6 +3,7 @@ const fastify = require('fastify')({logger: true});
 const fastifyWs = require('fastify-ws');
 const Next = require('next');
 const {redis, sendMessage} = require('./src/redis');
+const os = require('os');
 
 const port = parseInt(process.env.PORT, 10) || 3000;
 const dev = process.env.NODE_ENV !== 'production';
@@ -21,6 +22,10 @@ fastify.register(async (instance, opts, next) => {
       });
     });
   }
+
+  fastify.get('/id', (req, reply) => {
+    reply.send(os.hostname());
+  });
 
   fastify.get('/*', (req, reply) => {
     return app.handleRequest(req.req, reply.res).then(() => {
@@ -45,7 +50,7 @@ fastify.register(async (instance, opts, next) => {
   next();
 });
 
-fastify.listen(port, err => {
+fastify.listen(port, '0.0.0.0', err => {
   if (err) throw err;
   console.log(`> Ready on http://localhost:${port}`);
 });
